@@ -86,8 +86,8 @@ impl Intputer {
             }
 
             addressing::Instruction::JumpIfTrue(source, dest) => {
-                let source = addressing::get_value(source, self.program[(self.position+1) as usize], &self.program);
-                let dest = addressing::get_value(dest, self.program[(self.position+2) as usize], &self.program);
+                let source = self.get_parameter(source, 1);
+                let dest = self.get_parameter(dest, 2);
                 if source != 0 {
                     self.position = dest;
                 } else {
@@ -234,6 +234,38 @@ mod test {
     }
 
 
+    /*****
+     * Opcode 5 - jump if true
+     */
+    #[test]
+    fn test_jump_if_true_position_immmediate_jumps() {
+        let mut subject = Intputer{
+            input: vec![],
+            output: vec![],
+            terminated: false,
+            position: 0,
+            program: vec![1005, 3, 42, 1],
+        };
+        
+        subject.execute();
+
+        assert_eq!(subject.position, 42);
+    }
+
+    #[test]
+    fn test_jump_if_true_position_immmediate_noop() {
+        let mut subject = Intputer{
+            input: vec![],
+            output: vec![],
+            terminated: false,
+            position: 0,
+            program: vec![1005, 3, 42, 0],
+        };
+        
+        subject.execute();
+
+        assert_eq!(subject.position, 3);
+    }
     /*****
      * Opcode 99 - Termination
      */
