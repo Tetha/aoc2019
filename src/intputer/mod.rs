@@ -52,16 +52,16 @@ impl Intputer {
         println!("{:?}", addressing::Instruction::from(current_instruction));
         match addressing::Instruction::from(current_instruction) {
             addressing::Instruction::Add(source1,  source2) => {
-                let source1 = addressing::get_value(source1, self.program[(self.position+1) as usize], &self.program);
-                let source2 = addressing::get_value(source2, self.program[(self.position+2) as usize], &self.program);
+                let source1 = self.get_parameter(source1, 1);
+                let source2 = self.get_parameter(source2, 2);
                 let dest_pos = self.program[(self.position+3) as usize];
                 self.program[dest_pos as usize] = source1 + source2;
                 self.position = self.position + 4;
             }
 
             addressing::Instruction::Multiply(source1, source2) => {
-                let source1 = addressing::get_value(source1, self.program[(self.position+1) as usize], &self.program);
-                let source2 = addressing::get_value(source2, self.program[(self.position+2) as usize], &self.program);
+                let source1 = self.get_parameter(source1, 1);
+                let source2 = self.get_parameter(source2, 2);
                 let dest_pos = self.program[(self.position+3) as usize];
                 self.program[dest_pos as usize] = source1 * source2;
                 self.position = self.position + 4;
