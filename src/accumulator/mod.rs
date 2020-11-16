@@ -52,13 +52,11 @@ fn run_accumulator_simulation(phase_setting: &Vec<i32>, program: &str) -> i32 {
 }
 
 mod tests {
-    use super::run_accumulator_simulation;
-
     #[test]
     fn test_example_1() {
         let program = "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0";
         let phase_setting = vec![4,3,2,1,0];
-        let actual_output = run_accumulator_simulation(&phase_setting, program);
+        let actual_output = super::run_accumulator_simulation(&phase_setting, program);
         assert_eq!(43210, actual_output);
     }
 
@@ -66,7 +64,7 @@ mod tests {
     fn test_example_2() {
         let program = "3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0";
         let phase_setting = vec![0,1,2,3,4];
-        let actual_output = run_accumulator_simulation(&phase_setting, program);
+        let actual_output = super::run_accumulator_simulation(&phase_setting, program);
         assert_eq!(54321, actual_output);
     }
 
@@ -74,7 +72,7 @@ mod tests {
     fn test_example_3() {
         let program = "3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0";
         let phase_setting = vec![1,0,4,3,2];
-        let actual_output = run_accumulator_simulation(&phase_setting, program);
+        let actual_output = super::run_accumulator_simulation(&phase_setting, program);
         assert_eq!(65210, actual_output);
     }
 }
