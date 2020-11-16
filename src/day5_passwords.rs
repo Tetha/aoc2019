@@ -1,4 +1,4 @@
-pub fn day5_main() {
+pub fn day4_main() {
     println!("Hello, world!");
     let start = 171309;
     let end = 643603;
