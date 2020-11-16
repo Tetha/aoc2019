@@ -4,6 +4,8 @@ use std::error;
 
 mod day5_passwords;
 mod intputer;
+mod orbits;
+mod accumulator;
 
 #[derive(Debug, Clone)]
 struct UsageError {
@@ -30,8 +32,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let command = &args[1];
     match command as &str {
         "day2" => intputer::day2_main(),
-        "day5" => Ok(day5_passwords::day5_main()),
-        "day6" => intputer::day6_main(),
+        "day4" => Ok(day5_passwords::day4_main()),
+        "day5" => intputer::day5_main(1),
+        "day5_part2" => intputer::day5_main(5),
+        "day6" => orbits::day6_main(),
+        "day6_part2" => orbits::day6_part2_main(),
+        "day7" => accumulator::day7_main(),
         arg => Err(Box::new(UsageError::new(format!("Unknown argument {}", arg))))
 
     }
