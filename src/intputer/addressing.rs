@@ -12,6 +12,11 @@ pub enum Instruction {
     Input,
     Output(AddressingMode),
     JumpIfTrue(AddressingMode, AddressingMode),
+    JumpIfFalse(AddressingMode, AddressingMode),
+
+    CompareLessThan(AddressingMode, AddressingMode),
+    CompareEquals(AddressingMode, AddressingMode),
+
     End,
     Error
 }
@@ -46,6 +51,18 @@ impl From<i32> for Instruction {
                 AddressingMode::from(parameter_1_mode),
             ),
             5 => Instruction::JumpIfTrue(
+                AddressingMode::from(parameter_1_mode),
+                AddressingMode::from(parameter_2_mode),
+            ),
+            6 => Instruction::JumpIfFalse(
+                AddressingMode::from(parameter_1_mode),
+                AddressingMode::from(parameter_2_mode),
+            ),
+            7 => Instruction::CompareLessThan(
+                AddressingMode::from(parameter_1_mode),
+                AddressingMode::from(parameter_2_mode),
+            ),
+            8 => Instruction::CompareEquals(
                 AddressingMode::from(parameter_1_mode),
                 AddressingMode::from(parameter_2_mode),
             ),
@@ -87,5 +104,41 @@ mod test {
             Instruction::from(jump_with_immediate_parameter),
             Instruction::JumpIfTrue(AddressingMode::Position, AddressingMode::Immediate)
         );
+    }
+
+    #[test]
+    fn test_jump_if_false_decoding() {
+        assert_eq!(
+            Instruction::from(6), 
+            Instruction::JumpIfFalse(AddressingMode::Position, AddressingMode::Position));
+        assert_eq!(
+            Instruction::from(1106),
+            Instruction::JumpIfFalse(AddressingMode::Immediate, AddressingMode::Immediate));
+    }
+
+    #[test]
+    fn test_compare_less_than() {
+        assert_eq!(
+            Instruction::from(7),
+            Instruction::CompareLessThan(AddressingMode::Position, AddressingMode::Position));
+        assert_eq!(
+            Instruction::from(107),
+            Instruction::CompareLessThan(AddressingMode::Immediate, AddressingMode::Position));
+        assert_eq!(
+            Instruction::from(1007),
+            Instruction::CompareLessThan(AddressingMode::Position, AddressingMode::Immediate));
+    }
+
+    #[test]
+    fn test_compare_equals() {
+        assert_eq!(
+            Instruction::from(8),
+            Instruction::CompareEquals(AddressingMode::Position, AddressingMode::Position));
+        assert_eq!(
+            Instruction::from(108),
+            Instruction::CompareEquals(AddressingMode::Immediate, AddressingMode::Position));
+        assert_eq!(
+            Instruction::from(1008),
+            Instruction::CompareEquals(AddressingMode::Position, AddressingMode::Immediate));
     }
 }
