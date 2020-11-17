@@ -41,6 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "day7" => accumulator::day7_main(),
         "day8" => space_image_password::day8_part1_main(),
         "day8_part2" => space_image_password::day8_part2_main(),
+        "day9" => intputer::day9_main(),
         arg => Err(Box::new(UsageError::new(format!("Unknown argument {}", arg))))
 
     }

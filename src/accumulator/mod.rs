@@ -11,7 +11,7 @@ pub fn day7_main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn find_thruster_settings(program: &str) -> (Option<Vec<i32>>, Option<i32>) {
+fn find_thruster_settings(program: &str) -> (Option<Vec<i32>>, Option<i64>) {
     let mut possible_phases = vec![0,1,2,3,4];
     let possible_phases = Heap::new(&mut possible_phases);
 
@@ -35,14 +35,14 @@ fn find_thruster_settings(program: &str) -> (Option<Vec<i32>>, Option<i32>) {
     return (best_phase_setting, best_setting_output)
 }
 
-fn run_accumulator_simulation(phase_setting: &Vec<i32>, program: &str) -> i32 {
+fn run_accumulator_simulation(phase_setting: &Vec<i32>, program: &str) -> i64 {
     let accumulator_base_intputer = intputer::Intputer::from_str(program).unwrap();
 
     let mut current_output = 0;
 
     for phase in phase_setting {
         let mut accumulator = accumulator_base_intputer.clone();
-        accumulator.input.push(*phase);
+        accumulator.input.push(*phase as i64);
         accumulator.input.push(current_output);
         accumulator.run().unwrap();
         current_output = accumulator.output[0];
