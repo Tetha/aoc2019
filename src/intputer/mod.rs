@@ -30,6 +30,16 @@ pub fn day9_main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+pub fn day9_part2_main() -> Result<(), Box<dyn std::error::Error>> {
+    let input = include_str!("day9_boost_input");
+    let mut testputer = Intputer::from_str(input)?;
+    testputer.input.push(2);
+    testputer.run()?;
+
+    println!("The output is: {:?}", testputer.output);
+    Ok(())
+}
+
 #[derive(Debug, Clone)]
 pub struct Intputer {
     pub input: Vec<i64>,
