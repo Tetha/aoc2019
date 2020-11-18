@@ -156,6 +156,7 @@ mod test {
             Instruction::CompareEquals(AddressingMode::Position, AddressingMode::Immediate, AddressingMode::Position));
     }
 
+    #[test]
     fn test_set_relative_base() {
         assert_eq!(
             Instruction::from(9),
@@ -165,6 +166,6 @@ mod test {
             Instruction::SetRelativeBase(AddressingMode::Immediate));
         assert_eq!(
             Instruction::from(209),
-            Instruction::SetRelativeBase(AddressingMode::Position));
+            Instruction::SetRelativeBase(AddressingMode::Relative));
     }
 }
