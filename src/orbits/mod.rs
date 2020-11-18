@@ -107,9 +107,9 @@ impl OrbitDefinition {
     }
 }
 
+#[cfg(test)]
 mod test {
-    use super::*;
-
+    use super::OrbitDefinition;
     #[test]
     fn test_orbit_from_string() {
         let input = "
