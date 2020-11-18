@@ -7,6 +7,7 @@ mod intputer;
 mod orbits;
 mod accumulator;
 mod space_image_password;
+mod asteroids;
 
 #[derive(Debug, Clone)]
 struct UsageError {
@@ -42,6 +43,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "day8" => space_image_password::day8_part1_main(),
         "day8_part2" => space_image_password::day8_part2_main(),
         "day9" => intputer::day9_main(),
+        "day9_part2" => intputer::day9_part2_main(),
+        "day10" => asteroids::day10_main(),
         arg => Err(Box::new(UsageError::new(format!("Unknown argument {}", arg))))
 
     }
