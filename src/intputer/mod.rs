@@ -48,7 +48,7 @@ pub struct Intputer {
     position: i64,
     relative_base: i64,
     program : Vec<i64>,
-    debug: bool,
+    pub debug: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -62,13 +62,38 @@ impl fmt::Display for UnknownOpcode {
 }
 
 impl Intputer {
+    pub fn run_until_new_output_values(&mut self, new_output_values: i32) -> Option<(i64, i64)> {
+        if self.debug {
+            println!("Run until {} new outputs", new_output_values);
+            self.dump_state();
+        }
+        let start_output_len = self.output.len();
+        while !self.terminated && self.output.len() < start_output_len + new_output_values as usize {
+            if self.debug {
+                self.dump_state();
+            }
+            self.execute()
+        }
+        if self.terminated {
+            return None
+        } else {
+            let outputs = (self.output[self.output.len() - 2], self.output[self.output.len()-1]);
+            if self.debug {
+                println!("Computed: {:?}", outputs);
+            }
+            return Some(outputs)
+        }
+
+    }
+
     pub fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         if self.debug {
-            println!("{:?}", self.program);
+            println!("Start run");
+            self.dump_state();
         }
         while !self.terminated {
             if self.debug {
-                println!("{:?}", self);
+                self.dump_state();
             }
             self.execute()
         }
@@ -187,7 +212,26 @@ impl Intputer {
         if self.program.len() <= dest_pos as usize{
             self.program.resize((dest_pos + 1) as usize, 0);
         }
+        if self.debug {
+            println!("WRITE: Cell {} updated from {} to {}", dest_pos, self.program[dest_pos as usize], value);
+        }
         self.program[dest_pos as usize] = value;
+    }
+
+    fn dump_state(&self) {
+        println!("Input: (Next) {}", self.input.iter().map(|i| i.to_string() + ", " ).collect::<String>());
+        println!("Output: (First) {} (Last)", self.output.iter().map(|i| i.to_string() + ", ").collect::<String>());
+        for (index, content) in self.program.iter().enumerate() {
+            if index % 10 == 0 {
+                println!();
+                print!("{:5}:", index);
+            }
+            let position_marker = if self.position as usize == index { '+' } else { ' ' };
+            let base_marker = if self.relative_base as usize == index { '_' } else { ' ' };
+            print!(" {}{}{:>12}{}{} |", base_marker, position_marker, content, position_marker, base_marker);
+        }
+
+        println!();
     }
 }
 
@@ -201,6 +245,7 @@ impl FromStr for Intputer {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let unparsed_program: Vec<&str> = s.split(",").collect();
+        println!("{:?}", unparsed_program);
         let opcodes: Result<Vec<i64>, _> = unparsed_program.iter().map(|s| { s.parse::<i64>() }).collect();
 
         match opcodes {

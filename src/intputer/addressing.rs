@@ -89,8 +89,20 @@ impl From<i64> for Instruction {
 pub fn get_value(mode: AddressingMode, parameter: i64, program: &Vec<i64>, relative_base: i64) -> i64 {
     match mode {
         AddressingMode::Immediate => parameter,
-        AddressingMode::Position => program[parameter as usize],
-        AddressingMode::Relative => program[(relative_base + parameter) as usize],
+        AddressingMode::Position => {
+            if parameter as usize > program.len() {
+                return 0
+            } else {
+                return program[parameter as usize]
+            }
+        },
+        AddressingMode::Relative => {
+            if (relative_base + parameter) as usize > program.len() {
+                return 0;
+            } else {
+                return program[(relative_base + parameter) as usize]
+            }
+        },
         AddressingMode::Error => -1,
     }
 }
