@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use std::num::ParseIntError;
 use std::fmt;
+use std::fmt::Debug;
 
 mod addressing;
 
@@ -62,26 +63,46 @@ impl fmt::Display for UnknownOpcode {
 }
 
 impl Intputer {
-    pub fn run_until_new_output_values(&mut self, new_output_values: i32) -> Option<(i64, i64)> {
+    pub fn add_input<T> (&mut self, input: &T)
+        where T: ToIntputerInput + Debug {
+        let converted_input = input.to_intputer_input();
         if self.debug {
-            println!("Run until {} new outputs", new_output_values);
+            println!("Adding input <{:?}> -> {}", input, converted_input);
+        }
+        self.input.push(converted_input)
+    }
+
+    pub fn add_many_inputs<T> (&mut self, inputs: impl Iterator<Item=T>)
+        where T: ToIntputerInput + Debug {
+            inputs.map(|i| self.add_input::<T>(&i)).for_each(drop);
+    }
+
+    pub fn get_entire_output<T>(&self) -> Result<Vec<T>, UnexpectedOutputError>
+        where T: FromIntputerOutput + Debug {
+        self.output.iter().map(|o| T::from_intputer_output(*o)).collect()
+    }
+
+    pub fn run_until_new_output_values<T>(&mut self) -> Result<Option<T> , UnexpectedOutputError>
+        where T: FromIntputerOutput + Debug {
+        if self.debug {
+            println!("Run until 1 new output");
             self.dump_state();
         }
         let start_output_len = self.output.len();
-        while !self.terminated && self.output.len() < start_output_len + new_output_values as usize {
+        while !self.terminated && self.output.len() < start_output_len + 1 as usize {
             if self.debug {
                 self.dump_state();
             }
             self.execute()
         }
         if self.terminated {
-            return None
+            return Ok(None)
         } else {
-            let outputs = (self.output[self.output.len() - 2], self.output[self.output.len()-1]);
+            let new_output = T::from_intputer_output(self.output[self.output.len() - 1])?;
             if self.debug {
-                println!("Computed: {:?}", outputs);
+                println!("Computed: {:?}", new_output);
             }
-            return Some(outputs)
+            return Ok(Some(new_output))
         }
 
     }
@@ -262,6 +283,31 @@ impl FromStr for Intputer {
         }
         
         
+    }
+}
+
+pub trait ToIntputerInput {
+    fn to_intputer_input(&self) -> i64;
+}
+
+#[derive(Debug, Clone)]
+pub struct UnexpectedOutputError {
+    pub output: i64,
+    pub message: String,
+}
+impl std::error::Error for UnexpectedOutputError {}
+impl fmt::Display for UnexpectedOutputError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "cannot decode output {}: {}", self.output, self.message)
+    }
+}
+pub trait FromIntputerOutput where Self:  Sized {
+    fn from_intputer_output(output: i64) -> Result<Self, UnexpectedOutputError>;
+}
+
+impl FromIntputerOutput for i64 {
+    fn from_intputer_output(output: i64) -> Result<i64, UnexpectedOutputError> {
+       return Ok(output); 
     }
 }
 

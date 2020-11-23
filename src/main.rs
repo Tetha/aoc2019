@@ -12,6 +12,7 @@ mod hull_painter;
 mod jupiter;
 mod arcade;
 mod chemistry;
+mod repair_droid;
 
 #[derive(Debug, Clone)]
 struct UsageError {
@@ -56,6 +57,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "day13" => arcade::day13_part1_main(),
         "day14_test" => chemistry::day14_test_main(),
         "day14" => chemistry::day14_part1_main(),
+        "day15" => repair_droid::day_15_part1_main(),
         arg => Err(Box::new(UsageError::new(format!("Unknown argument {}", arg))))
 
     }

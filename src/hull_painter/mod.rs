@@ -153,9 +153,11 @@ impl HullPainterRobot {
                 println!("Color: {:?} <- {}/{}", colors, self.x, self.y);
             }
             self.brain.input.push(colors.get((self.x, self.y)).to_intputer_input());
-            match self.brain.run_until_new_output_values(2) {
-                None => return colors,
-                Some((paint_directive, direction_output)) => {
+            let paint_directive = self.brain.run_until_new_output_values::<i64>().unwrap();
+            let direction_output = self.brain.run_until_new_output_values::<i64>().unwrap();
+            match (paint_directive, direction_output) {
+                (_, None) | (None, _) => return colors,
+                (Some(paint_directive), Some(direction_output)) => {
                     colors[(self.x, self.y)] = field_color::FieldColor::try_from(paint_directive).unwrap();
                     self.turn(Turn::try_from(direction_output).unwrap());
                     self.move_forward()
